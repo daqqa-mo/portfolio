@@ -101,6 +101,7 @@ nav a.l{display:none}.eg,.cg{grid-template-columns:repeat(2,1fr)}.fg{grid-templa
 
 .vg{display:grid;grid-template-columns:1.5fr 1fr;gap:22px;align-items:start}
 .arch,.oval{cursor:pointer}
+.hs b,.ss b,.ev strong{font-variant-numeric:tabular-nums}
 .vw{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:0 0 26px;align-items:start}@media(max-width:700px){.vw{grid-template-columns:1fr}}.vv{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.vv .vc.v video{max-height:none}.vv .vc h3{font-size:16px}.vv .vc p{font-size:13px}
 @media(max-width:900px){.vv{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.vv{grid-template-columns:1fr}}
 .vc{background:var(--ink);color:var(--paper);border-radius:26px;padding:12px 12px 20px;position:relative}
@@ -202,6 +203,27 @@ document.getElementById('hm').onclick=up;
 document.querySelectorAll('.arch,.oval').forEach(function(x){x.onclick=up});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')lb.classList.remove('on')});
 document.getElementById('lg').onclick=function(){var en=b.classList.toggle('en'),h=document.documentElement;h.dir=en?'ltr':'rtl';h.lang=en?'en':'ar';this.textContent=en?'AR':'EN'};
+</script>
+<script>
+(function(){
+var els=document.querySelectorAll('.hs b,.ss b,.ev strong');
+var rm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function fmt(v,d,c){var s=v.toFixed(d);if(c){var a=s.split('.');a[0]=a[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');s=a.join('.')}return s}
+function run(el){
+ el._t=(el._t||0)+1;var tk=el._t;
+ var t=el.getAttribute('data-final'),m=/^(\D*)([\d,]*\.?\d+)(.*)$/.exec(t);
+ if(!m||rm){el.textContent=t;return}
+ var n=parseFloat(m[2].replace(/,/g,'')),d=(m[2].split('.')[1]||'').length,c=m[2].indexOf(',')>-1,s=null,D=1800;
+ function f(ts){if(tk!==el._t)return;if(!s)s=ts;var k=Math.min((ts-s)/D,1),e=1-Math.pow(1-k,4);
+  el.textContent=m[1]+fmt(n*e,d,c)+m[3];
+  if(k<1)requestAnimationFrame(f);else el.textContent=t}
+ requestAnimationFrame(f)}
+function reset(el){el._t=(el._t||0)+1;if(!rm)el.textContent=el.getAttribute('data-final').replace(/[\d]/g,'0')}
+els.forEach(function(el){el.setAttribute('data-final',el.textContent.trim());el.setAttribute('aria-label',el.textContent.trim())});
+if(!('IntersectionObserver' in window)){els.forEach(run);return}
+var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){run(x.target)}else{reset(x.target)}})},{threshold:.4});
+els.forEach(function(el){el.textContent=el.getAttribute('data-final').replace(/[\d]/g,'0');io.observe(el)});
+})();
 </script>
 </body>
 </html>
